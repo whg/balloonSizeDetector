@@ -15,10 +15,7 @@ void ofApp::setup(){
 
     depthImage.allocate(kinect.width, kinect.height);
     grayImage.allocate(kinect.width, kinect.height);
-    imageRect.set(0, 0, kinect.width, kinect.height);
-
-    grayThreshNear.allocate(depthImage.width, depthImage.height);
-    grayThreshFar.allocate(depthImage.width, depthImage.height);
+    imageRect.set(0, 0, ofGetWidth(), ofGetHeight());
 
     roiRect.set(0, 0, 1, 1);
     nearThreshold = 230;
@@ -27,26 +24,19 @@ void ofApp::setup(){
     
     drawGui = false;
     
-//    gui = *gui.setup();
     gui.setup();
 
     balloons.push_back(shared_ptr<Balloon>(new Balloon(0, gui)));
     balloons.push_back(shared_ptr<Balloon>(new Balloon(1, gui)));
     
     gui.loadFromFile("settings.xml");
-//    for (auto it = balloons.begin(); it != balloons.end(); ++it) {
-//        it->get()->gui.loadFromFile("settings.xml");
-//    }
-//    gui.setup();
+
 }
 
 void ofApp::exit() {
     gui.saveToFile("settings.xml");
     
     OscSender::destroy();
-//    for (auto it = balloons.begin(); it != balloons.end(); ++it) {
-//        it->get()->gui.saveToFile("settings.xml");
-//    }
 }
 
 //--------------------------------------------------------------
@@ -55,15 +45,13 @@ void ofApp::update(){
     
     kinect.update();
     
-    // there is a new frame and we are connected
     if(kinect.isFrameNew()) {
         
-        // load grayscale depth image from the kinect source
         depthImage.setFromPixels(kinect.getDepthPixels());
         
-//        static ofxCvGrayscaleImage grayThreshNear, grayThreshFar;
-//        if (!grayThreshNear.bAllocated) grayThreshNear.allocate(depthImage.width, depthImage.height);
-//        if (!grayThreshFar.bAllocated) grayThreshFar.allocate(depthImage.width, depthImage.height);
+        static ofxCvGrayscaleImage grayThreshNear, grayThreshFar;
+        if (!grayThreshNear.bAllocated) grayThreshNear.allocate(depthImage.width, depthImage.height);
+        if (!grayThreshFar.bAllocated) grayThreshFar.allocate(depthImage.width, depthImage.height);
 
         grayThreshNear = depthImage;
         grayThreshFar = depthImage;
@@ -113,15 +101,7 @@ void ofApp::draw(){
         
         
     }
-    
 
-//    ofPushStyle();
-//    ofNoFill();
-//    ofSetHexColor(0x00ff00);
-//    ofDrawRectangle(ofMap(roiRect, kinectRect, imageRect));
-//    
-//    ofPopStyle();
-    
     
     
     if (drawGui) {
@@ -130,8 +110,8 @@ void ofApp::draw(){
         ss << "far threshold " << farThreshold << " (press: < >) num blobs found " << contourFinder.nBlobs;
         
         
-        ofSetHexColor(0xffffff);
-        ofDrawBitmapString(ss.str(), 10, imageRect.height+ 10);
+        ofSetHexColor(0x008899);
+        ofDrawBitmapString(ss.str(), 10, imageRect.height- 60);
         
         gui.draw();
     }
@@ -202,10 +182,6 @@ void ofApp::mouseDragged(int x, int y, int button){
         Balloon *b = it->get();
         if (b->selectingRoi) {
             ofVec2f q = ofMap(p-mouseDownPos, imageRect, kinectRect);
-//            b->roiRect.width = q.x;
-//            b->roiRect.height = q.y;
-//            b->rectVec->z = q.x;
-//            b->rectVec->w = q.y;
             b->rectVec = ofVec4f(b->rectVec->x, b->rectVec->y, q.x, q.y);
         }
     }
@@ -221,9 +197,8 @@ void ofApp::mousePressed(int x, int y, int button){
         Balloon *b = it->get();
         if (b->selectingRoi) {
             ofVec2f q = ofMap(p, imageRect, kinectRect);
-//
+
             b->rectVec = ofVec4f(q.x, q.y, b->rectVec->z, b->rectVec->w);
-//            b->roiRect.setPosition(ofMap(p, imageRect, kinectRect));
         }
     }
     
@@ -245,7 +220,8 @@ void ofApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h){
-
+    imageRect.width = w;
+    imageRect.height = h;
 }
 
 //--------------------------------------------------------------

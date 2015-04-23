@@ -18,7 +18,7 @@ class Balloon {
 
     ofxCvContourFinder contourFinder;
 
-    ofxLabel label;
+    ofxLabel areaLabel;
     ofParameter<ofColor> col;
     int number;
     float updateFrequency;
@@ -44,7 +44,7 @@ public:
         
         gui.setup("balloon" + ofToString(number));
         gui.add(col.set("colour", 100, ofColor(0, 0) ,255));
-        gui.add(label.setup("area", ofToString(0)));
+        gui.add(areaLabel.setup("area", ofToString(0)));
         gui.add(rectVec.set("rect", ofVec4f(10), ofVec4f(0), ofVec4f(300)));
         gui.loadFromFile("settings.xml");
         panel.add(&gui);
@@ -83,12 +83,13 @@ public:
                 m.addFloatArg(bs.circleness);
                 OscSender::get()->sendMessage(m);
                 cout << "sent message for" << number << endl;
+                
+                areaLabel = ofToString(bs.area);
             }
             
             
         }
         
-//        rectVec.set(ofVec4f(roiRect.position.x, roiRect.position.y, roiRect.width, roiRect.height));
     }
     
     BalloonShape getShape() {

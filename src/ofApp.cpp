@@ -61,11 +61,6 @@ void ofApp::update(){
         cvAnd(grayThreshNear.getCvImage(), grayThreshFar.getCvImage(), grayImage.getCvImage(), NULL);
         grayImage.flagImageChanged();
         
-        int d = 60;
-        if (roiRect.getArea() > 50) {
-            grayImage.setROI(roiRect);
-            contourFinder.findContours(grayImage, 10, (kinect.width*kinect.height)/2, 20, false);
-        }
         
         for (auto it = balloons.begin(); it != balloons.end(); ++it) {
             
@@ -87,19 +82,12 @@ void ofApp::draw(){
     ofSetHexColor(0xffffff);
     grayImage.draw(imageRect);
     
-    ofPushMatrix();
-    ofTranslate(ofMap(roiRect.position, kinectRect, imageRect));
-    contourFinder.draw(imageRect);
-    ofPopMatrix();
     
     
     for (auto it = balloons.begin(); it != balloons.end(); ++it) {
         Balloon *b = it->get();
         
-        
         b->draw(kinectRect, imageRect);
-        
-        
     }
 
     
@@ -107,7 +95,7 @@ void ofApp::draw(){
     if (drawGui) {
         stringstream ss;
         ss << "near threshold " << nearThreshold << " (press: + -)" << endl;
-        ss << "far threshold " << farThreshold << " (press: < >) num blobs found " << contourFinder.nBlobs;
+        ss << "far threshold " << farThreshold << " (press: < >)" << endl;
         
         
         ofSetHexColor(0x008899);

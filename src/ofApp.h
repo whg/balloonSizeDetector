@@ -30,9 +30,6 @@ public:
     ofxCvGrayscaleImage depthImage, grayImage;
     ofRectangle imageRect;
     
-//    ofxCvGrayscaleImage grayThreshNear, grayThreshFar;
-//    ofxCvGrayscaleImage grayThreshNear, grayThreshFar;
-    ofxCvContourFinder contourFinder;
     ofVec2f mouseDownPos;
     int nearThreshold, farThreshold;
     ofRectangle roiRect;
